@@ -1,0 +1,165 @@
+<!-- Welcome <b> <span id='roll_number' style='display: none'>160040007</span> <span id='first'>Nautatava</span> <span
+    id='last'>
+    Navlakha</span></b>.</br> -->
+
+<!-- Simple Textfield -->
+<form id="donationForm" method="post" action="donate.php">
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label less-margin">
+    <select class="mdl-textfield__input" id="hostel" name="hostel" onchange="check()">
+      <option value="">Select your hostel</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <!-- <option value="7">7</option>
+      <option value="8">8</option> -->
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+      <option value="14">14</option>
+      <option value="15">15</option>
+      <option value="16">16</option>
+      <option value="18">18</option>
+      <option value="Tansa">Tansa</option>
+    </select>
+  </div>
+  <br>
+  <div class="mdl-textfield mdl-js-textfield less-margin">
+    <select class="mdl-textfield__input" id="choose_amount" name="choose_amount" onchange="ChangeValue(this.value);">
+      <option value="">choose an amount</option>
+      <option value="2000">2000</option>
+      <option value="2500">2500</option>
+      <option value="3000">3000</option>
+      <option value="other">Custom amount</option>
+    </select>
+    <input class="mdl-textfield__input" pattern="-?[0-9]*(\.[0-9]+)?" type="text" name="amount"
+      placeholder="Enter amount for donation" id="amount" style="display:none;" />
+    <!-- <span class="mdl-textfield__error">Input is not a number!</span> -->
+  </div>
+  <input type="hidden" id="ldap" name="ldap" value="">
+  <input type="hidden" id="first_name" name="first_name" value="">
+  <input type="hidden" id="last_name" name="last_name" value="">
+  <div class="conditions">
+    <!-- The input hidden -->
+    <input type="hidden" name="agreeToConditon" value="0" />
+
+    <input type="checkbox" name="agreeToConditon" id="termsChkbx" onchange="check()" value="1" />
+    <label for="termsChkbx">I understand that the donation drive is voluntary, and I am free to specify the amount that
+      I want to donate. I give my full consent knowing that the specified amount will be deducted from my Semester Mess
+      Advance Fee of Spring(even) Semester 2019-20.
+    </label>
+  </div>
+  <!-- Raised button -->
+  <button id="submitButton" disabled class="mdl-button mdl-js-button mdl-button--raised">
+    Submit
+  </button>
+</form>
+<script type="text/javascript">
+  var canEnable = false;
+  let ldap = document.getElementById("ldap");
+  let first_name = document.getElementById("first_name");
+  let last_name = document.getElementById("last_name");
+  let hostel = document.getElementById('hostel')
+  let amount = document.getElementById('amount')
+  let checker = document.getElementById('termsChkbx');
+  let sendbtn = document.getElementById('submitButton');
+
+  function findValue(element) {
+    return element.options[element.selectedIndex].value;
+  }
+  function assignValue(sel, val) {
+    sel.options[sel.selectedIndex].value = val;
+    let opts = sel.options;
+    for (let opt, j = 0; opt = opts[j]; j++) {
+      if (opt.value == val) {
+        sel.selectedIndex = j;
+        break;
+      }
+    }
+  }
+  function check() {
+    console.log(findValue(hostel), amount.value, checker.checked);
+
+    if (findValue(hostel) && amount.value && amount.value > 0 && checker.checked) {
+      sendbtn.disabled = false;
+    }
+    else {
+      sendbtn.disabled = true;
+    }
+  }
+</script>
+<script type="text/javascript">
+  function ChangeValue(val) {
+    if (val == 'other') {
+      amount.value = "";
+      amount.style.display = 'block';
+    }
+    else {
+      amount.value = val;
+      amount.style.display = 'none';
+    }
+    check();
+  }
+</script>
+<script type="text/javascript">
+  amount.addEventListener("keypress", function () {
+    if (amount.value.match(/^[0-9]+$/) != null) {
+      check();
+    }
+    else {
+      sendbtn.disabled = true;
+      // error
+    }
+  });
+</script>
+<script>
+  window.onload =
+    function () {
+      checker.checked = false;
+      ldap.value = document.getElementById("roll_number").innerHTML;
+      first_name.value = document.getElementById("first").innerHTML;
+      last_name.value = document.getElementById("last").innerHTML;
+      try {
+        amount.value = document.getElementById(already_donated).innerHTML;
+      } catch (error) {
+        amount.value = "";
+        assignValue(document.getElementById("choose_amount"), "");
+      }
+
+    }
+</script>
+
+
+<script>
+  function post(path, params, method = 'post') {
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    const form = document.createElement('form');
+    form.method = method;
+    form.action = path;
+
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = key;
+        hiddenField.value = params[key];
+
+        form.appendChild(hiddenField);
+      }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  function submit() {
+    post('donate.php', { ldap: ldap.value, first_name: first_name.value, last_name: last_name.value, hostel: findValue(hostel), amount: amount.value, agreeToConditon: checker.checked });
+  }
+
+</script>
